@@ -5,7 +5,7 @@
 #include <memory>
 
 #include "FFmpegWrapper.h"
-
+#include "Logger.h"
 class QTableWidget;
 class QPlainTextEdit;
 class QLabel;
