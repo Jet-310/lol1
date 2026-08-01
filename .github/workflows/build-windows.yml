@@ -35,7 +35,7 @@ jobs:
         run: |
           mkdir dist
           copy build\Release\FFmpegAudioEditor.exe dist\
-          "%Qt6_DIR%\..\..\bin\windeployqt.exe" --release --no-translations --dir dist dist\FFmpegAudioEditor.exe
+          "%Qt6_DIR%\..\..\..\bin\windeployqt.exe" --release --no-translations --dir dist dist\FFmpegAudioEditor.exe
 
       - name: Upload distributable folder
         uses: actions/upload-artifact@v4
