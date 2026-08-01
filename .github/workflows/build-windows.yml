@@ -1,1 +1,44 @@
+name: Build Windows Executable
 
+# Builds a fully self-contained Windows .exe with no local Qt/CMake
+# install required on your machine. Push this project to a GitHub repo
+# and this workflow runs automatically; download the result from the
+# "Actions" tab -> latest run -> "Artifacts" section.
+on:
+  push:
+    branches: [ "main", "master" ]
+  workflow_dispatch: {}
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Qt 6
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: '6.7.*'
+          arch: 'win64_msvc2019_64'
+          modules: ''
+
+      - name: Configure (CMake)
+        run: cmake -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH="${{ env.Qt6_DIR }}"
+
+      - name: Build (Release)
+        run: cmake --build build --config Release --parallel
+
+      - name: Deploy Qt runtime (windeployqt)
+        shell: cmd
+        run: |
+          mkdir dist
+          copy build\Release\FFmpegAudioEditor.exe dist\
+          "%Qt6_DIR%\..\..\bin\windeployqt.exe" --release --no-translations --dir dist dist\FFmpegAudioEditor.exe
+
+      - name: Upload distributable folder
+        uses: actions/upload-artifact@v4
+        with:
+          name: FFmpegAudioEditor-windows
+          path: dist/
